@@ -1,5 +1,5 @@
 const { BrowserWindow, ipcMain, app, autoUpdater, shell, Menu, globalShortcut, dialog } = require('electron');
-const { version, author } = require('./package.json');
+const { version } = require('./package.json');
 const options = require('./assets/options.json');
 const path = require('path');
 const os = require('os');
@@ -15,9 +15,16 @@ let date;
 
 const isDev = process.env.DEV ? (process.env.DEV.trim() == 'true') : false;
 const dirPath = path.join(os.homedir(), 'Desktop', 'weekend');
+const optionsDir = path.join(__dirname, 'assets', 'options.json');
 
 if(options.experimental && !printQueue.includes('weekendA5'))
     printQueue.push('weekendA5');
+
+if(options.firstRun)
+{
+    options.firstRun = false;
+    fs.writeFileSync(optionsDir, JSON.stringify(options, null, 2));
+}
 
 //#region squirrel/updater
 const handleSquirrelEvent = () => {
@@ -99,7 +106,7 @@ const menuTemplate = [
                         if(options.saveLocation == null)
                         {
                             if(win)
-                                dialog.showOpenDialogSync(win, {});
+                                dialog.showOpenDialog(win, { properties: ['openDirectory', 'promptToCreate']});
                         }
 
                         if(!printQueue.includes('weekendA5'))
@@ -119,12 +126,22 @@ const menuTemplate = [
                         }
                     }
 
-                    fs.writeFileSync('./assets/options.json', JSON.stringify(options, null, 2));
+                    fs.writeFileSync(optionsDir, JSON.stringify(options, null, 2));
+                    /*app.relaunch({args: process.argv.slice(1).concat(['--relaunch'])});
+                    app.exit(0);*/
                 }
             }
         ]
     }
 ]
+
+if(options.experimental)
+    menuTemplate[0].submenu.push({
+        label: 'Options',
+        click: () => {
+            console.log("Open options window");
+        }
+    });
 
 const menu = Menu.buildFromTemplate(menuTemplate);
 Menu.setApplicationMenu(menu);
@@ -180,7 +197,7 @@ app.whenReady().then(() => {
     RegisterShortcuts();
 
     if(options.saveLocation == null && options.experimental)
-        dialog.showOpenDialogSync(win, {});
+        dialog.showOpenDialog(win, {});
 
     app.on('activate', () => {
         if(BrowserWindow.getAllWindows().length == 0)
@@ -240,11 +257,21 @@ ipcMain.on('open-print-window', (event, args) => {
 });
 
 ipcMain.on('get-data', event => {
-    event.sender.send('sent-data', {data: data, date: date});
+    event.sender.send('sent-data', { data, date});
 })
 
-ipcMain.on('print-to-pdf', event => {
+ipcMain.on('print-to-pdf', async event => {
     const pdf = BrowserWindow.fromWebContents(event.sender);
+
+    /*await PrintLoop(dirPath, pdf, printWindow).then(finished => {
+        if(finished)
+        {
+            printWindow.close();
+            bIsPrintWindowOpen = false;
+            win.webContents.send('saved-pdfs');
+            shell.openPath(dirPath);
+        }
+    });*/
 
     Print(printQueue[queueIndex], pdf).then(saved => {
         if(saved && queueIndex == printQueue.length - 1)
@@ -264,17 +291,14 @@ ipcMain.on('print-to-pdf', event => {
 });
 
 autoUpdater.on('update-available', () => win.loadFile('./html/main-window/update.html'));
-autoUpdater.on('update-downloaded', (event, releaseNotes, releaseName) => {
+
+autoUpdater.on('update-downloaded', () => {
     win.webContents.send('downloaded-update');
 });
 
 ipcMain.on('install-update', () => {
     autoUpdater.quitAndInstall();
 });
-
-const OpenPrintWindow = data => {
-
-};
 
 const Print = async (fileName, data) => {
     let options = {};
