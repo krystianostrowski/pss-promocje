@@ -61,8 +61,27 @@ window.onload = () => {
 
                     pr = units.calcPriceForLOrKg(volume.value, pr);
 
-                    pricePerSI.innerText = `(${pr.toString().replace('.', ',')}zł/${volume.unit})`;
-                    price.appendChild(pricePerSI);
+                    if(pr != false)
+                    {
+                        pricePerSI.innerText = `(${pr.toString().replace('.', ',')}zł/${volume.unit})`;
+                        price.appendChild(pricePerSI);
+                    }
+                }
+
+                if(item.name.toLowerCase().includes('piwo'))
+                {
+                    const span = document.createElement('span');
+                    span.classList.add('ustawa');
+                    span.innerText = '1/2 LITRA PIWA ZAWIERA 25 GRAMÓW CZYSTEGO ALKOHOL ETYLOWEGO. NAWET TAKA ILOŚĆ SZKODZI ZDROWIU KOBIET W CIĄŻY I JEST NEBEZPIECZNA DLA KIEROWCÓW.';
+                    td.appendChild(span);
+                }
+
+                if(item.name.toLowerCase().includes('wódka'))
+                {
+                    const span = document.createElement('span');
+                    span.classList.add('ustawa');
+                    span.innerText = 'ALKOHOL SZKODZI ZDROWIU, NIE SPRZEDAJEMY ALKOHOLU OSOBOM NIETRZEŹWYM ORAZ OSOBOM DO LAT 18 ZGODNIE Z ART.15 UST.1 USTAWY Z DNIA 26.10.1982R. DZ.U. Z 2002R. NR 147 POZ.1231 ZE ZM.';
+                    td.appendChild(span);
                 }
 
                 tr.appendChild(td);

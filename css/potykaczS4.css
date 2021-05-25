@@ -11,10 +11,6 @@ body {
 }
 
 .page {
-    /*height: 297mm;
-    width: 420mm;
-    max-height: 842pt;
-    max-width: 1191pt;*/
     display: flex;
     flex-direction: column;
     text-align: center;
@@ -22,7 +18,6 @@ body {
     text-transform: uppercase;
     justify-content: space-between;
 
-    /*border: 1px solid #000;*/
     page-break-after: always;
     width: 100vw;
     height: 100vh;
@@ -61,12 +56,18 @@ td {
     display: flex;
     flex-direction: column;
     margin: 0;
+    padding: 10pt;
 }
 
 .pricePerSI {
     font-size: 16pt;
     text-transform: lowercase;
     color: black;
+}
+
+.ustawa {
+    font-size: 10pt;
+    color: #ff0000;
 }
 
 .zl {

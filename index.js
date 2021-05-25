@@ -152,7 +152,7 @@ const CreateWindow = () => {
         height: 600,
         resizable: true,
         darkTheme: true,
-        title: `Promocja weekendowa v${version} by ${author}`,
+        title: `Promocja weekendowa v${version}`,
         autoHideMenuBar: false,
         webPreferences: {
             devTools: true,

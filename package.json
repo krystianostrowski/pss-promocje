@@ -1,6 +1,6 @@
 {
   "name": "promocja_weekendowa",
-  "version": "0.9.1",
+  "version": "1.0.0",
   "description": "Program to generate pomotional materials",
   "main": "index.js",
   "scripts": {

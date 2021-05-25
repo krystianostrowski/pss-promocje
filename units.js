@@ -60,7 +60,7 @@ const ToSIUnits = (value, unit) => {
 //BUG: Script calculates prive when value == 1
 const calcPriceForLOrKg = (value, price) => {
     if(value == 1)
-        return;
+        return false;
 
     const p = price / value;
     let res = Math.round(p * 100) / 100;

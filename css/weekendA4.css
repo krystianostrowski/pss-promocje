@@ -5,10 +5,6 @@ body {
 }
 
 .page {
-    /*width: 297mm;
-    height: 210mm;
-    max-width: 842pt;
-    max-height: 595pt;*/
     display: flex;
     flex-direction: column;
     text-align: center;
@@ -16,7 +12,6 @@ body {
     text-transform: uppercase;
     justify-content: space-between;
 
-    /*border: 1px solid #000;*/
     page-break-after: always;
     width: 100vw;
     height: 100vh;
