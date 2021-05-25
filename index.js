@@ -105,7 +105,7 @@ const menuTemplate = [
                         if(!printQueue.includes('weekendA5'))
                         {
                             printQueue.push('weekendA5');
-                            win.loadFile('./html/index-experimental.html');
+                            win.loadFile('./html/main-window/index-experimental.html');
                         }
                     }
                     else if(!options.experimental)
@@ -115,7 +115,7 @@ const menuTemplate = [
                         if(printQueue.includes('weekendA5'))
                         {
                             printQueue.splice(-1, 1);
-                            win.loadFile('./html/index.html');
+                            win.loadFile('./html/main-window/index.html');
                         }
                     }
 
@@ -162,9 +162,9 @@ const CreateWindow = () => {
     });
 
     if(options.experimental)
-        win.loadFile('./html/index-experimental.html');
+        win.loadFile('./html/main-window/index-experimental.html');
     else
-        win.loadFile('./html/index.html');
+        win.loadFile('./html/main-window/index.html');
 
     if(isDev)
         win.webContents.openDevTools({mode: 'undocked'});
@@ -213,7 +213,7 @@ ipcMain.on('open-print-window', (event, args) => {
                 }
             });
 
-            window.loadFile('./html/' + printQueue[i] + '.html');
+            window.loadFile('./html/docs-to-print/' + printQueue[i] + '.html');
         }*/
 
     if(!bIsPrintWindowOpen)
@@ -230,7 +230,7 @@ ipcMain.on('open-print-window', (event, args) => {
         });
     
         printWindow.hide();
-        printWindow.loadFile('./html/zawiadomienie.html');
+        printWindow.loadFile('./html/docs-to-print/zawiadomienie.html');
 
         if(isDev)
             printWindow.webContents.openDevTools({mode: 'undocked'});
@@ -258,12 +258,12 @@ ipcMain.on('print-to-pdf', event => {
         else
         {
             queueIndex++;
-            printWindow.loadFile(`./html/${printQueue[queueIndex]}.html`);
+            printWindow.loadFile(`./html/docs-to-print/${printQueue[queueIndex]}.html`);
         }
     });
 });
 
-autoUpdater.on('update-available', () => win.loadFile('./html/update.html'));
+autoUpdater.on('update-available', () => win.loadFile('./html/main-window/update.html'));
 autoUpdater.on('update-downloaded', (event, releaseNotes, releaseName) => {
     win.webContents.send('downloaded-update');
 });
