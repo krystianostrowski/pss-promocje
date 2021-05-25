@@ -1,0 +1,52 @@
+body {
+    text-align: center;
+    font-family: 'Lato', sans-serif;
+    text-transform: uppercase;
+    font-weight: 800;
+}
+
+table {
+    width: 100%;
+}
+
+tr > td:nth-child(1) {
+    width: 50%;
+    text-align: left;
+}
+
+/*td {
+    display: flex;
+    align-items: center;
+}*/
+
+td {
+    font-size: 14pt;
+}
+
+.tmie,
+.code {
+    color: red;
+}
+
+h1,
+.time {
+    font-size: 22pt;
+}
+
+.time {
+    color: red;
+    text-transform: lowercase;
+}
+
+tr > td:nth-child(2) {
+    text-transform: lowercase;
+}
+
+th {
+    font-size: 16pt;
+}
+
+@font-face {
+    font-family: 'Lato';
+    src: url(../assets/fonts/Lato-Regular.ttf);
+}
