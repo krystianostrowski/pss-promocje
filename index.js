@@ -1,9 +1,9 @@
-const { BrowserWindow, ipcMain, app, autoUpdater, shell, Menu, globalShortcut, dialog } = require('electron');
+const { BrowserWindow, ipcMain, app, autoUpdater, shell, Menu, globalShortcut, dialog, ipcRenderer } = require('electron');
 const { version } = require('./package.json');
-const options = require('./assets/options.json');
 const path = require('path');
 const os = require('os');
 const fs = require('fs');
+let options = require('./assets/options.json');
 
 let win;
 let printWindow;
@@ -14,7 +14,7 @@ let data;
 let date;
 
 const isDev = process.env.DEV ? (process.env.DEV.trim() == 'true') : false;
-const dirPath = path.join(os.homedir(), 'Desktop', 'weekend');
+let dirPath;
 const optionsDir = path.join(__dirname, 'assets', 'options.json');
 
 if(options.experimental && !printQueue.includes('weekendA5'))
@@ -82,12 +82,29 @@ const handleSquirrelEvent = () => {
 if(handleSquirrelEvent())
     return;
 
-if(!isDev)
+if(!isDev && !options.firstRun)
 {
     autoUpdater.setFeedURL('http://krystian-ostrowski.webd.pro/update/weekend/');
     autoUpdater.checkForUpdates();
 }
 //#endregion
+
+const GetSavePath = () => {
+    let savePath = dialog.showOpenDialogSync(win, { properties: ['openDirectory', 'promptToCreate']});
+
+    if(savePath.length)
+    {
+        savePath = savePath[0];
+        options.saveLocation = savePath;
+        fs.writeFileSync(optionsDir, JSON.stringify(options, null, 2));
+    }
+    else
+    {
+        savePath = path.join(os.homedir(), 'Desktop', 'weekend');
+    }
+
+    return savePath;
+}
 
 const menuTemplate = [
     {
@@ -106,7 +123,7 @@ const menuTemplate = [
                         if(options.saveLocation == null)
                         {
                             if(win)
-                                dialog.showOpenDialog(win, { properties: ['openDirectory', 'promptToCreate']});
+                                dirPath = GetSavePath();
                         }
 
                         if(!printQueue.includes('weekendA5'))
@@ -142,7 +159,7 @@ if(options.experimental)
     menuTemplate[0].submenu.push({
         label: 'Options',
         click: () => {
-            console.log("Open options window");
+            win.loadFile('./html/main-window/settings.html');
         }
     });
 
@@ -200,7 +217,7 @@ app.whenReady().then(() => {
     RegisterShortcuts();
 
     if(options.saveLocation == null && options.experimental)
-        dialog.showOpenDialog(win, {});
+        dirPath = GetSavePath();
 
     app.on('activate', () => {
         if(BrowserWindow.getAllWindows().length == 0)
@@ -261,7 +278,21 @@ ipcMain.on('open-print-window', (event, args) => {
 
 ipcMain.on('get-data', event => {
     event.sender.send('sent-data', { data, date});
+});
+
+ipcMain.on('get-options', event => {
+    event.reply('render-options', options)
 })
+
+ipcMain.on('update-options', (event, args) => {
+    options = args;
+    fs.writeFileSync(optionsDir, JSON.stringify(options, null, 2));
+});
+
+ipcMain.on('open-dir-dialog', (event, args) => {
+    dirPath = GetSavePath();
+    event.reply('update-path', dirPath);
+});
 
 ipcMain.on('print-to-pdf', async event => {
     const pdf = BrowserWindow.fromWebContents(event.sender);

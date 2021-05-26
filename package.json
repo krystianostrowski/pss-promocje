@@ -11,7 +11,9 @@
   },
   "author": "Krystian Ostrowski",
   "license": "ISC",
-  "dependencies": {},
+  "dependencies": {
+    "bootstrap": "^5.0.1"
+  },
   "devDependencies": {
     "electron": "^12.0.6",
     "electron-packager": "^15.2.0",
