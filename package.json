@@ -12,7 +12,9 @@
   "author": "Krystian Ostrowski",
   "license": "ISC",
   "dependencies": {
-    "bootstrap": "^5.0.1"
+    "@popperjs/core": "^2.9.2",
+    "bootstrap": "^5.0.1",
+    "jquery": "^3.6.0"
   },
   "devDependencies": {
     "electron": "^12.0.6",

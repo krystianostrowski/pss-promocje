@@ -14,7 +14,7 @@ let data;
 let date;
 
 const isDev = process.env.DEV ? (process.env.DEV.trim() == 'true') : false;
-let dirPath;
+let dirPath = path.join(os.homedir(), 'Desktop', 'weekend');
 const optionsDir = path.join(__dirname, 'assets', 'options.json');
 
 if(options.experimental && !printQueue.includes('weekendA5'))

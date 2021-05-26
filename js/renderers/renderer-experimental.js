@@ -1,5 +1,7 @@
 window.onload = () => {
     const { ipcRenderer } = require('electron');
+    const $ = require('jquery');
+    require('bootstrap');
 
     const saveBtn = document.querySelector('#saveBtn');
     const table = document.querySelector('tbody');
