@@ -56,8 +56,6 @@ const ToSIUnits = (value, unit) => {
     return {value: value, unit: unit};
 }
 
-//TODO: Check if bug was fixed
-//BUG: Script calculates prive when value == 1
 const calcPriceForLOrKg = (value, price) => {
     if(value == 1)
         return false;
