@@ -17,6 +17,7 @@ window.onload = () => {
         rows.forEach(row => {
             const cells = row.querySelectorAll('td input');
             const select = row.querySelector('select');
+            const file = row.querySelector('.fileUpload');
 
             console.log(cells);
 
@@ -26,10 +27,8 @@ window.onload = () => {
                 price: cells[2].value,
                 prom_price: cells[3].value,
                 type: select.value,
-                img: cells[4].mozFullPath
+                img: file.getAttribute('path')
             }
-
-            console.log(cells[4].src);
 
             data.push(obj);
         });
@@ -56,6 +55,25 @@ window.onload = () => {
 
         ipcRenderer.send('open-print-window', {data: data, date: date});
     };
+
+    table.addEventListener('click', e => {
+        if(e.target.classList.contains('fileUpload'))
+        {
+            const node = e.target;
+            const fileId = node.id;
+
+            ipcRenderer.send('upload-image', fileId);
+        }
+    });
+
+    ipcRenderer.on('image-uploaded', (event, args) => {
+        const id = args.id;
+        const path = args.path;
+
+        console.log(id, path);
+
+        document.querySelector(`#${id}`).setAttribute('path', path);
+    });
 
     saveBtn.addEventListener('click', () => SaveData());
 

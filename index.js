@@ -1,4 +1,4 @@
-const { BrowserWindow, ipcMain, app, autoUpdater, shell, Menu, globalShortcut, dialog, ipcRenderer } = require('electron');
+const { BrowserWindow, ipcMain, app, autoUpdater, shell, Menu, globalShortcut, dialog } = require('electron');
 const { version } = require('./package.json');
 const path = require('path');
 const os = require('os');
@@ -153,15 +153,7 @@ const menuTemplate = [
             }
         ]
     }
-]
-
-if(options.experimental)
-    menuTemplate[0].submenu.push({
-        label: 'Options',
-        click: () => {
-            win.loadFile('./html/main-window/settings.html');
-        }
-    });
+];
 
 const menu = Menu.buildFromTemplate(menuTemplate);
 Menu.setApplicationMenu(menu);
@@ -251,6 +243,7 @@ ipcMain.on('open-print-window', (event, args) => {
             });
 
             window.loadFile('./html/docs-to-print/' + printQueue[i] + '.html');
+            window.openDevTools();
         }*/
 
     if(!bIsPrintWindowOpen)
@@ -272,6 +265,11 @@ ipcMain.on('open-print-window', (event, args) => {
         if(isDev)
             printWindow.webContents.openDevTools({mode: 'undocked'});
 
+            printWindow.webContents.on('console-message', (event, level, message, line, sourceId) => {
+                if(level != 2)
+                    console.log(message);
+            })
+
         bIsPrintWindowOpen = true;
     }
 });
@@ -292,6 +290,12 @@ ipcMain.on('update-options', (event, args) => {
 ipcMain.on('open-dir-dialog', (event, args) => {
     dirPath = GetSavePath();
     event.reply('update-path', dirPath);
+});
+
+ipcMain.on('upload-image', (event, arg) => {
+    const file = dialog.showOpenDialogSync(win, { filters: [ { name: "Images", extensions: ['png'] } ], properties: ['openFile'] });
+
+    event.reply('image-uploaded', {id: arg, path: file });
 });
 
 ipcMain.on('print-to-pdf', async event => {

@@ -7,10 +7,17 @@
     <title></title>
     <script src="../../js/renderers/renderer-experimental.js"></script>
     <link rel="stylesheet" href="../../node_modules/bootstrap/dist/css/bootstrap.min.css">
-    <link rel="stylesheet" href="../../css/index.css">
+    <link rel="stylesheet" href="../../css/index-experimental.css">
 </head>
 <body>
-    <div class="container">
+    <div class="container-fluid">
+
+        <div class="navbar navbar-dark">
+            <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#menuOffcanvas">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+        </div>
+
         <form>
             <label>
                 Od:
@@ -20,7 +27,7 @@
                 Do:
                 <input type="date" id="to">
             </label>
-            <table border="1" style="border-collapse: collapse;">
+            <table class="table table-dark table-bordered">
                 <thead>
                     <th>Nazwa</th>
                     <th>Kod</th>
@@ -43,7 +50,7 @@
                             <option value="warzywo">warzywo/owoc</option>
                             </select>
                         </td>
-                        <td><input type="file"></td>
+                        <td><button class="fileUpload btn btn-success" id="file1" type="button">Dodaj zdjęcie</td>
                     </tr>
                     <tr id="item2">
                         <td><input type="text"></td>
@@ -56,7 +63,7 @@
                             <option value="piekarnia">piekarnia</option>
                             <option value="warzywo">warzywo/owoc</option>
                         </select></td>
-                        <td><input type="file"></td>
+                        <td><button class="fileUpload btn btn-success" id="file2" type="button">Dodaj zdjęcie</td>
                     </tr>
                     <tr id="item3">
                         <td><input type="text"></td>
@@ -69,7 +76,7 @@
                             <option value="piekarnia">piekarnia</option>
                             <option value="warzywo">warzywo/owoc</option>
                         </select></td>
-                        <td><input type="file"></td>
+                        <td><button class="fileUpload btn btn-success" id="file3" type="button">Dodaj zdjęcie</td>
                     </tr>
                     <tr id="item4">
                         <td><input type="text"></td>
@@ -82,7 +89,7 @@
                             <option value="piekarnia">piekarnia</option>
                             <option value="warzywo">warzywo/owoc</option>
                         </select></td>
-                        <td><input type="file"></td>
+                        <td><button class="fileUpload btn btn-success" id="file4" type="button">Dodaj zdjęcie</td>
                     </tr>
                     <tr id="item5">
                         <td><input type="text"></td>
@@ -95,7 +102,7 @@
                             <option value="piekarnia">piekarnia</option>
                             <option value="warzywo">warzywo/owoc</option>
                         </select></td>
-                        <td><input type="file"></td>
+                        <td><button class="fileUpload btn btn-success" id="file5" type="button">Dodaj zdjęcie</td>
                     </tr>
                     <tr id="item6">
                         <td><input type="text"></td>
@@ -108,7 +115,7 @@
                             <option value="piekarnia">piekarnia</option>
                             <option value="warzywo">warzywo/owoc</option>
                         </select></td>
-                        <td><input type="file"></td>
+                        <td><button class="fileUpload btn btn-success" id="file6" type="button">Dodaj zdjęcie</td>
                     </tr>
                     <tr id="item7">
                         <td><input type="text"></td>
@@ -121,7 +128,7 @@
                             <option value="piekarnia">piekarnia</option>
                             <option value="warzywo">warzywo/owoc</option>
                         </select></td>
-                        <td><input type="file"></td>
+                        <td><button class="fileUpload btn btn-success" id="file7" type="button">Dodaj zdjęcie</td>
                     </tr>
                     <tr id="item8">
                         <td><input type="text"></td>
@@ -134,7 +141,7 @@
                             <option value="piekarnia">piekarnia</option>
                             <option value="warzywo">warzywo/owoc</option>
                         </select></td>
-                        <td><input type="file"></td>
+                        <td><button class="fileUpload btn btn-success" id="file8" type="button">Dodaj zdjęcie</td>
                     </tr>
                     <tr id="item9">
                         <td><input type="text"></td>
@@ -147,7 +154,7 @@
                             <option value="piekarnia">piekarnia</option>
                             <option value="warzywo">warzywo/owoc</option>
                         </select></td>
-                        <td><input type="file"></td>
+                        <td><button class="fileUpload btn btn-success" id="file9" type="button">Dodaj zdjęcie</td>
                     </tr>
                     <tr id="item10">
                         <td><input type="text"></td>
@@ -160,7 +167,7 @@
                             <option value="piekarnia">piekarnia</option>
                             <option value="warzywo">warzywo/owoc</option>
                         </select></td>
-                        <td><input type="file"></td>
+                        <td><button class="fileUpload btn btn-success" id="file10 type="button"">Dodaj zdjęcie</button></td>
                     </tr>
                 </tbody>
             </table>
@@ -169,6 +176,27 @@
                 <button type="reset">Wyczyść</button>
             </div>
         </form>
+
+        <!--OFFCANVAS MENU-->
+        <div class="offcanvas offcanvas-start text-dark" tabindex="-1" id="menuOffcanvas">
+            <div class="offcanvas-header">
+                <h5 id="offcanvasTopLabel">Menu</h5>
+                <button type="button" class="btn-close btn-reset" data-bs-dismiss="offcanvas"></button>
+            </div>
+            <div class="offcanvas-body">
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <a class="nav-link" href="./index-experimental.html">Weekend</a>
+                    </li>
+                    <li class="nav-item"><strike>Tydzień z firmą</strike></li>
+                    <li class="nav-item"><strike>Poniedziałek</strike></li>
+                    <li class="nav-item"><strike>Środa</strike></li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="./settings.html">Opcje <span class="badge rounded-phill bg-danger">BETA</span></a>
+                    </li>
+                </ul>
+            </div>
+        </div>
     </div>
     <div class="overlay">
         <h1>Przygotowywanie plików.</h1>

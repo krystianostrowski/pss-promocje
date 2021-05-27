@@ -1,11 +1,9 @@
-window.onload = () => {
+window.addEventListener('DOMContentLoaded', () => {
     const { ipcRenderer } = require('electron');
     const units = require('../../js/units');
     const tbody = document.querySelector('tbody');
     let data;
     let date;
-
-    console.log(__dirname);
 
     ipcRenderer.send('get-data');
 
@@ -14,7 +12,8 @@ window.onload = () => {
         date = args.date;
 
         RenderData();
-        ipcRenderer.send('print-to-pdf');
+        setTimeout(() => ipcRenderer.send('print-to-pdf'), 5000);
+        //ipcRenderer.send('print-to-pdf');
     });
 
     const RenderData = () => {
@@ -86,6 +85,13 @@ window.onload = () => {
                     td.appendChild(span);
                 }
 
+                if(item.img != null)
+                {
+                    const img = document.createElement('img');
+                    img.src = item.img;
+                    td.appendChild(img);
+                }
+
                 tr.appendChild(td);
             }
 
@@ -95,4 +101,4 @@ window.onload = () => {
         document.querySelector('#from').innerText = date.from;
         document.querySelector('#to').innerText = date.to;
     }
-};
+});
