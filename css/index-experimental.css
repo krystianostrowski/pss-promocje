@@ -82,6 +82,20 @@ button {
     height: 20%;
 }
 
+.td-img {
+    height: 36px;
+}
+
+td {
+    padding: 0 !important;
+    height: 50px;
+}
+
+tr > td:last-of-type {
+    display: flex;
+    padding: 8px !important; 
+}
+
 @font-face {
     font-family: 'Lato';
     src: url(../assets/fonts/Lato-Regular.ttf);

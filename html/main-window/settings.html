@@ -6,21 +6,26 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="../../js/renderers/settings.js"></script>
     <link rel="stylesheet" href="../../node_modules/bootstrap/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../../css/settings.css">
 </head>
 <body>
-    <div class="container-fluid">
-        <div class="navbar"></div>
+    <div class="container-fluid text-white" style="height: 100vh;">
+        <div class="navbar navbar-dark">
             <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#menuOffcanvas">
                 <span class="navbar-toggler-icon"></span>
             </button>
         </div>
-        <input type="text" disabled id="path">
-        <label>
-            <input type="checkbox">
-            Enable experimental
-        </label>
-        <button id="dirDialog" class="btn">Wybierz</button>
-        <button id="saveBtn" class="btn">Zapisz</button>
+        <div class="d-flex flex-column justify-content-evenly align-items-center m-auto" style="height: calc(100% - 56px);">
+            <div>
+                <input type="text" disabled id="path">
+                <button id="dirDialog" class="btn btn-primary">Wybierz</button>
+            </div>
+            <label>
+                <input type="checkbox" id="experimentalCheckbox">
+                Enable experimental
+            </label>
+            <button id="saveBtn" class="btn btn-primary">Zapisz</button>
+        </div>
 
         <!--OFFCANVAS MENU-->
         <div class="offcanvas offcanvas-start text-dark" tabindex="-1" id="menuOffcanvas">
@@ -42,6 +47,31 @@
                 </ul>
             </div>
         </div>
+
+        <div class="position-fixed bottom-0 end-0 p-3" style="z-index: 999;">
+            <div class="toast-container">
+                <div id="savedToast" class="toast hide bg-success text-white" role="alert" aria-live="assertive" aria-atomic="true">
+                    <div class="d-flex">
+                        <div class="toast-body">
+                            Zapisano zmiany.
+                        </div>
+                        <button type="button" class="btn-close me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+                    </div>
+                </div>
+    
+                <div id="saveAndRestartToast" class="toast hide bg-danger text-white" role="alert" aria-live="assertive" aria-atomic="true">
+                    <div class="toast-header">
+                        <strong>Zapisano zmiany.</strong>
+                        <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+                    </div>
+                    <div class="toast-body">
+                        Zmiany będą zastosowane po ponownym uruchomieniu aplikacji.<br>
+                        <button class="btn btn-primary" id="restartBtn">Uruchom ponownie</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
     </div>
 </body>
 </html>

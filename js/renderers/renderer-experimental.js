@@ -34,18 +34,13 @@ window.onload = () => {
         });
         
         let dateTime = new Date(document.querySelector('#from').value)
-        let day = dateTime.getDate() + 1;
-        let month = dateTime.getMonth() + 1;
-
-        day = day < 10 ? "0" + day : day;
-        month = month < 10 ? "0" + month : month;
+        let day = ("0" + dateTime.getDate() + 1).slice(-2);
+        let month = `0${dateTime.getMonth() + 1}`.slice(-2);
         const from = `${day}.${month}.${dateTime.getFullYear()}`;
 
         dateTime = new Date(document.querySelector('#to').value);
-        day = dateTime.getDate() + 1;
-        day = day < 10 ? "0" + day : day;
-        month = dateTime.getMonth() + 1;
-        month = month < 10 ? "0" + month : month;
+        day = ("0" + dateTime.getDate() + 1).slice(-2);
+        month = `0${dateTime.getMonth() + 1}`.slice(-2);
         const to = `${day}.${month}.${dateTime.getFullYear()}`;
 
         const date = {
@@ -73,6 +68,20 @@ window.onload = () => {
         console.log(id, path);
 
         document.querySelector(`#${id}`).setAttribute('path', path);
+        const parent = document.querySelector(`#${id}-parent`);
+        let img = parent.querySelector('img');
+
+        if(img)
+        {
+            img.src = path;
+        }
+        else
+        {
+            img = document.createElement('img');
+            img.src = path;
+            img.classList.add('td-img');
+            parent.appendChild(img);
+        }
     });
 
     saveBtn.addEventListener('click', () => SaveData());

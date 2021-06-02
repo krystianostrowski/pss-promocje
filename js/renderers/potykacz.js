@@ -4,6 +4,8 @@ window.addEventListener('DOMContentLoaded', () => {
     const tbody = document.querySelector('tbody');
     let data;
     let date;
+    let imagesToLoad = 0;
+    let imagesLoaded = 0;
 
     ipcRenderer.send('get-data');
 
@@ -12,8 +14,7 @@ window.addEventListener('DOMContentLoaded', () => {
         date = args.date;
 
         RenderData();
-        setTimeout(() => ipcRenderer.send('print-to-pdf'), 5000);
-        //ipcRenderer.send('print-to-pdf');
+        ipcRenderer.send('print-to-pdf');
     });
 
     const RenderData = () => {
@@ -85,10 +86,18 @@ window.addEventListener('DOMContentLoaded', () => {
                     td.appendChild(span);
                 }
 
+                //TODO: Move to weekend A5 file after testing
                 if(item.img != null)
                 {
+                    imagesToLoad++;
                     const img = document.createElement('img');
                     img.src = item.img;
+                    img.classList.add('img-img')
+                    img.addEventListener('load', () => {
+                        imagesLoaded++;
+                        if(imagesLoaded == imagesToLoad)
+                            ipcRenderer.send('print-to-pdf');
+                    });
                     td.appendChild(img);
                 }
 

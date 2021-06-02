@@ -4,21 +4,20 @@ const path = require('path');
 const os = require('os');
 const fs = require('fs');
 let options = require('./assets/options.json');
+const { PrintLoop, AddToQueue, RemoveFromQueue, printQueue } = require('./js/PrintSystem');
 
 let win;
 let printWindow;
 let bIsPrintWindowOpen = false;
-const printQueue = ['zawiadomienie', 'miesny', 'weekendA4', 'potykacz', 'potykaczS4'];
-let queueIndex = 0;
 let data;
 let date;
 
 const isDev = process.env.DEV ? (process.env.DEV.trim() == 'true') : false;
-let dirPath = path.join(os.homedir(), 'Desktop', 'weekend');
+let dirPath = options.experimental ? options.saveLocation : path.join(os.homedir(), 'Desktop', 'weekend');
 const optionsDir = path.join(__dirname, 'assets', 'options.json');
 
-if(options.experimental && !printQueue.includes('weekendA5'))
-    printQueue.push('weekendA5');
+if(options.experimental)
+    AddToQueue('weekendA5');
 
 if(options.firstRun)
 {
@@ -92,16 +91,17 @@ if(!isDev && !options.firstRun)
 const GetSavePath = () => {
     let savePath = dialog.showOpenDialogSync(win, { properties: ['openDirectory', 'promptToCreate']});
 
-    if(savePath.length)
+    if(savePath != undefined)
     {
         savePath = savePath[0];
-        options.saveLocation = savePath;
-        fs.writeFileSync(optionsDir, JSON.stringify(options, null, 2));
     }
     else
     {
-        savePath = path.join(os.homedir(), 'Desktop', 'weekend');
+        savePath = (dirPath == null) ? path.join(os.homedir(), 'Desktop', 'weekend') : dirPath;
     }
+    
+    options.saveLocation = savePath;
+    fs.writeFileSync(optionsDir, JSON.stringify(options, null, 2));
 
     return savePath;
 }
@@ -122,25 +122,19 @@ const menuTemplate = [
                     {
                         if(options.saveLocation == null)
                         {
-                            if(win)
-                                dirPath = GetSavePath();
+                            dirPath = GetSavePath();
+                            options.saveLocation = dirPath;
                         }
 
-                        if(!printQueue.includes('weekendA5'))
-                        {
-                            printQueue.push('weekendA5');
-                            win.loadFile('./html/main-window/index-experimental.html');
-                        }
+                        AddToQueue('weekendA5');
+                        win.loadFile('./html/main-window/index-experimental.html');
                     }
                     else if(!options.experimental)
                     {
                         options.saveLocation = null;
 
-                        if(printQueue.includes('weekendA5'))
-                        {
-                            printQueue.splice(-1, 1);
-                            win.loadFile('./html/main-window/index.html');
-                        }
+                        RemoveFromQueue('weekendA5');
+                        win.loadFile('./html/main-window/index.html');
                     }
 
                     fs.writeFileSync(optionsDir, JSON.stringify(options, null, 2));
@@ -265,12 +259,19 @@ ipcMain.on('open-print-window', (event, args) => {
         if(isDev)
             printWindow.webContents.openDevTools({mode: 'undocked'});
 
-            printWindow.webContents.on('console-message', (event, level, message, line, sourceId) => {
-                if(level != 2)
-                    console.log(message);
-            })
-
         bIsPrintWindowOpen = true;
+
+        printWindow.on('close', () => {
+            win.webContents.send('saved-pdfs');
+            shell.openPath(dirPath);
+            bIsPrintWindowOpen = false;
+        });
+
+        /*printWindow.webContents.on('render-process-gone', async event => {
+            const pdf = BrowserWindow.fromWebContents(event.sender);
+
+            await PrintLoop(dirPath, pdf, printWindow);
+        });*/
     }
 });
 
@@ -301,31 +302,9 @@ ipcMain.on('upload-image', (event, arg) => {
 ipcMain.on('print-to-pdf', async event => {
     const pdf = BrowserWindow.fromWebContents(event.sender);
 
-    /*await PrintLoop(dirPath, pdf, printWindow).then(finished => {
-        if(finished)
-        {
-            printWindow.close();
-            bIsPrintWindowOpen = false;
-            win.webContents.send('saved-pdfs');
-            shell.openPath(dirPath);
-        }
-    });*/
+    //const pdf = printWindow.webContents;
 
-    Print(printQueue[queueIndex], pdf).then(saved => {
-        if(saved && queueIndex == printQueue.length - 1)
-        {
-            printWindow.close();
-            bIsPrintWindowOpen = false;
-            queueIndex = 0;
-            win.webContents.send('saved-pdfs');
-            shell.openPath(dirPath);
-        }
-        else
-        {
-            queueIndex++;
-            printWindow.loadFile(`./html/docs-to-print/${printQueue[queueIndex]}.html`);
-        }
-    });
+    await PrintLoop(dirPath, pdf, printWindow);
 });
 
 autoUpdater.on('update-available', () => win.loadFile('./html/main-window/update.html'));
@@ -338,69 +317,7 @@ ipcMain.on('install-update', () => {
     autoUpdater.quitAndInstall();
 });
 
-const Print = async (fileName, data) => {
-    let options = {};
-
-    switch(fileName)
-    {
-        case 'zawiadomienie':
-        case 'weekendA5':
-            options = {
-                pageSize: 'A4',
-                landscape: false
-            };
-            break;
-
-        case 'miesny':
-        case 'potykacz':
-            options = {
-                pageSize: 'A3',
-                landscape: false,
-            };
-            break;
-
-        case 'weekendA4':
-            options = {
-                pageSize: 'A4',
-                landscape: true,
-            };
-            break;
-
-        case 'potykaczS4':
-            options = {
-                pageSize: 'A3',
-                landscape: true,
-            };
-            break;
-    }
-
-    if(!fs.existsSync(dirPath))
-        fs.mkdirSync(dirPath);
-    
-    let date = new Date();
-    let day = ("0" + date.getDate()).slice(-2);
-    let month = `0${date.getMonth() + 1}`.slice(-2);
-    let year = date.getFullYear();
-    /*let hour = ("0" + date.getHours()).slice(-2);
-    let min = ("0" + date.getMinutes()).slice(-2);
-    let sec = ("0" + date.getSeconds()).slice(-2);*/
-
-    date = `${year}-${month}-${day}`;
-
-    const dir = path.join(dirPath, date);
-
-    if(!fs.existsSync(dir))
-        fs.mkdirSync(dir);
-
-    const pdfPath = path.join(dir, `${fileName}.pdf`);
-    await data.webContents.printToPDF(options).then(data => {
-        fs.writeFile(pdfPath, data, err => {
-            if(err)
-                console.log(err.message);
-
-            console.log(`Saved file: ${fileName}`);
-        });
-    });
- 
-    return await Promise.resolve(true);
-};
+ipcMain.on('restart-app', () => {
+    app.relaunch({args: process.argv.slice(1).concat(['--relaunch'])});
+    app.exit(0);
+});
