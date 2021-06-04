@@ -64,14 +64,16 @@ window.onload = () => {
     ipcRenderer.on('image-uploaded', (event, args) => {
         const id = args.id;
         const path = args.path;
+        
+        if(path == undefined)
+            return;
 
-        console.log(id, path);
-
-        document.querySelector(`#${id}`).setAttribute('path', path);
+        const btn = document.querySelector(`#${id}`);
+        btn.setAttribute('path', path);
         const parent = document.querySelector(`#${id}-parent`);
         let img = parent.querySelector('img');
 
-        if(img)
+        if(img && path != undefined)
         {
             img.src = path;
         }
@@ -82,6 +84,11 @@ window.onload = () => {
             img.classList.add('td-img');
             parent.appendChild(img);
         }
+
+        img.addEventListener('click', e => {
+            e.target.remove();
+            btn.removeAttribute('path');
+        });
     });
 
     saveBtn.addEventListener('click', () => SaveData());
