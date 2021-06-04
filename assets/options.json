@@ -1,5 +1,7 @@
 {
   "firstRun": false,
   "experimental": true,
-  "saveLocation": "C:\\Users\\zombe\\Desktop\\weekend"
+  "saveLocation": "C:\\Users\\zombe\\Desktop\\weekend",
+  "background": null,
+  "saveWithBG": false
 }

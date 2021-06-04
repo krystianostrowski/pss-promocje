@@ -9,6 +9,7 @@ const { PrintLoop, AddToQueue, RemoveFromQueue, printQueue } = require('./js/Pri
 let win;
 let printWindow;
 let bIsPrintWindowOpen = false;
+let bShowWindows = false;
 let data;
 let date;
 
@@ -162,6 +163,10 @@ const RegisterShortcuts = () => {
         globalShortcut.register('F6', () => {
             win.openDevTools();
         });
+
+        globalShortcut.register('F7', () => {
+            bShowWindows = !bShowWindows;
+        });
     }
     
     globalShortcut.register('CmdOrCtrl+P', () => {
@@ -222,8 +227,7 @@ ipcMain.on('open-print-window', (event, args) => {
     data = args.data;
     date = args.date;
 
-    //TODO: Redo print events to remove bugs with displaying windows in dev mode
-    if(isDev)
+    if(isDev && bShowWindows)
         for(let i = 0; i < printQueue.length; i++)
         {
             const window = new BrowserWindow({
@@ -266,12 +270,6 @@ ipcMain.on('open-print-window', (event, args) => {
             shell.openPath(dirPath);
             bIsPrintWindowOpen = false;
         });
-
-        /*printWindow.webContents.on('render-process-gone', async event => {
-            const pdf = BrowserWindow.fromWebContents(event.sender);
-
-            await PrintLoop(dirPath, pdf, printWindow);
-        });*/
     }
 });
 
@@ -301,9 +299,7 @@ ipcMain.on('upload-image', (event, arg) => {
 
 ipcMain.on('print-to-pdf', async event => {
     const pdf = BrowserWindow.fromWebContents(event.sender);
-
-    //const pdf = printWindow.webContents;
-
+    
     await PrintLoop(dirPath, pdf, printWindow);
 });
 
