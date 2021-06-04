@@ -1,7 +1,6 @@
 node_modules
 build
 installer.js
-js/PrintSystem.js
 .VSCodeCounter
 assets/custom-templates.json
 assets/img

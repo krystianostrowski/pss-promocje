@@ -14,7 +14,9 @@ window.addEventListener('DOMContentLoaded', () => {
         date = args.date;
 
         RenderData();
-        ipcRenderer.send('print-to-pdf');
+
+        if(location.hash == '#print')
+            ipcRenderer.send('print-to-pdf');
     });
 
     const RenderData = () => {

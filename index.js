@@ -223,7 +223,7 @@ ipcMain.on('open-print-window', (event, args) => {
     date = args.date;
 
     //TODO: Redo print events to remove bugs with displaying windows in dev mode
-    /*if(isDev)
+    if(isDev)
         for(let i = 0; i < printQueue.length; i++)
         {
             const window = new BrowserWindow({
@@ -238,7 +238,7 @@ ipcMain.on('open-print-window', (event, args) => {
 
             window.loadFile('./html/docs-to-print/' + printQueue[i] + '.html');
             window.openDevTools();
-        }*/
+        }
 
     if(!bIsPrintWindowOpen)
     {
@@ -254,7 +254,7 @@ ipcMain.on('open-print-window', (event, args) => {
         });
     
         printWindow.hide();
-        printWindow.loadFile('./html/docs-to-print/zawiadomienie.html');
+        printWindow.loadFile('./html/docs-to-print/zawiadomienie.html', { hash: 'print' });
 
         if(isDev)
             printWindow.webContents.openDevTools({mode: 'undocked'});
