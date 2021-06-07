@@ -1,7 +1,12 @@
+const notifier = require('../../js/EventSystem');
+
 window.onload = () => {
     const { ipcRenderer } = require('electron');
     const $ = require('jquery');
     require('bootstrap');
+    const { ErrorHandler } = require('../../js/errors');
+
+    ErrorHandler();
 
     const saveBtn = document.querySelector('#saveBtn');
     const table = document.querySelector('tbody');

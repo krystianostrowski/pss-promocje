@@ -3,4 +3,6 @@ build
 installer.js
 .VSCodeCounter
 assets/custom-templates.json
-assets/img
+weekend
+css/docs-to-print
+css/main-window

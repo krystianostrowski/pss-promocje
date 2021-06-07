@@ -33,10 +33,13 @@ const PrintLoop = async (dirPath, pdf, printWindow) => {
             queueIndex++;
             await printWindow.loadFile(`./html/docs-to-print/${printQueue[queueIndex]}.html`, { hash: 'print' });
         }
+    }).catch(() => {
+        queueIndex = 0;
+        printWindow.close();
     });
 };
 
-const Print = async (fileName, data, dirPath) => {
+const Print = async (fileName, data, dirPath, win) => {
     let options = {};
 
     switch(fileName)
@@ -73,22 +76,23 @@ const Print = async (fileName, data, dirPath) => {
     }
 
     if(!fs.existsSync(dirPath))
-        fs.mkdirSync(dirPath);
+            fs.mkdirSync(dirPath).catch(err => {
+                return Promise.reject(err);
+            });
     
     let date = new Date();
     let day = ("0" + date.getDate()).slice(-2);
     let month = `0${date.getMonth() + 1}`.slice(-2);
     let year = date.getFullYear();
-    /*let hour = ("0" + date.getHours()).slice(-2);
-    let min = ("0" + date.getMinutes()).slice(-2);
-    let sec = ("0" + date.getSeconds()).slice(-2);*/
 
     date = `${year}-${month}-${day}`;
 
     const dir = path.join(dirPath, date);
 
     if(!fs.existsSync(dir))
-        fs.mkdirSync(dir);
+        fs.mkdirSync(dir).catch(err => {
+            return Promise.reject(err);
+        });
 
     const pdfPath = path.join(dir, `${fileName}.pdf`);
     await data.webContents.printToPDF(options).then(data => {

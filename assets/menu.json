@@ -1,0 +1,26 @@
+[
+    {
+        "name": "Weekend",
+        "link": "./index-experimental.html",
+        "enabled": true,
+        "badge": ""
+    },
+    {
+        "name": "Tylko u nas",
+        "link": "",
+        "enabled": false,
+        "badge": ""
+    },
+    {
+        "name": "Tydzień z firmą",
+        "link": "",
+        "enabled": false,
+        "badge": ""
+    },
+    {
+        "name": "Opcje",
+        "link": "./settings.html",
+        "enabled": true,
+        "badge": "BETA"
+    }
+]

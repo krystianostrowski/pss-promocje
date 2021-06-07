@@ -2,10 +2,10 @@ const { BrowserWindow, ipcMain, app, autoUpdater, shell, Menu, globalShortcut, d
 const { version } = require('./package.json');
 const path = require('path');
 const os = require('os');
-const fs = require('fs');
-let options = require('./assets/options.json');
 const { PrintLoop, AddToQueue, RemoveFromQueue, printQueue } = require('./js/PrintSystem');
+const { ReadSettings, WriteSettings } = require('./js/Settings');
 
+let settings = ReadSettings();
 let win;
 let printWindow;
 let bIsPrintWindowOpen = false;
@@ -14,16 +14,15 @@ let data;
 let date;
 
 const isDev = process.env.DEV ? (process.env.DEV.trim() == 'true') : false;
-let dirPath = options.experimental ? options.saveLocation : path.join(os.homedir(), 'Desktop', 'weekend');
-const optionsDir = path.join(__dirname, 'assets', 'options.json');
+let dirPath = settings.experimental ? settings.saveLocation : path.join(os.homedir(), 'Desktop', 'weekend');
 
-if(options.experimental)
+if(settings.experimental)
     AddToQueue('weekendA5');
 
-if(options.firstRun)
+if(settings.firstRun)
 {
-    options.firstRun = false;
-    fs.writeFileSync(optionsDir, JSON.stringify(options, null, 2));
+    settings.firstRun = false;
+    WriteSettings(settings);
 }
 
 //#region squirrel/updater
@@ -82,7 +81,7 @@ const handleSquirrelEvent = () => {
 if(handleSquirrelEvent())
     return;
 
-if(!isDev && !options.firstRun)
+if(!isDev && !settings.firstRun)
 {
     autoUpdater.setFeedURL('http://krystian-ostrowski.webd.pro/update/weekend/');
     autoUpdater.checkForUpdates();
@@ -101,8 +100,8 @@ const GetSavePath = () => {
         savePath = (dirPath == null) ? path.join(os.homedir(), 'Desktop', 'weekend') : dirPath;
     }
     
-    options.saveLocation = savePath;
-    fs.writeFileSync(optionsDir, JSON.stringify(options, null, 2));
+    settings.saveLocation = savePath;
+    WriteSettings(settings);
 
     return savePath;
 }
@@ -115,30 +114,30 @@ const menuTemplate = [
                 id: 1,
                 label: 'Enable experimental features',
                 type: 'checkbox',
-                checked: options.experimental,
+                checked: settings.experimental,
                 click: () => {
-                    options.experimental = menu.getMenuItemById(1).checked;
+                    settings.experimental = menu.getMenuItemById(1).checked;
 
-                    if(options.experimental)
+                    if(settings.experimental)
                     {
-                        if(options.saveLocation == null)
+                        if(settings.saveLocation == null)
                         {
                             dirPath = GetSavePath();
-                            options.saveLocation = dirPath;
+                            settings.saveLocation = dirPath;
                         }
 
                         AddToQueue('weekendA5');
                         win.loadFile('./html/main-window/index-experimental.html');
                     }
-                    else if(!options.experimental)
+                    else if(!settings.experimental)
                     {
-                        options.saveLocation = null;
+                        settings.saveLocation = null;
 
                         RemoveFromQueue('weekendA5');
                         win.loadFile('./html/main-window/index.html');
                     }
 
-                    fs.writeFileSync(optionsDir, JSON.stringify(options, null, 2));
+                    WriteSettings(settings);
                     if(!isDev)
                     {
                         app.relaunch({args: process.argv.slice(1).concat(['--relaunch'])});
@@ -189,7 +188,7 @@ const CreateWindow = () => {
         }
     });
 
-    if(options.experimental)
+    if(settings.experimental)
         win.loadFile('./html/main-window/index-experimental.html');
     else
         win.loadFile('./html/main-window/index.html');
@@ -207,7 +206,7 @@ app.whenReady().then(() => {
     CreateWindow();
     RegisterShortcuts();
 
-    if(options.saveLocation == null && options.experimental)
+    if(settings.saveLocation == null && settings.experimental)
         dirPath = GetSavePath();
 
     app.on('activate', () => {
@@ -278,12 +277,12 @@ ipcMain.on('get-data', event => {
 });
 
 ipcMain.on('get-options', event => {
-    event.reply('render-options', options)
+    event.reply('render-options', settings)
 })
 
 ipcMain.on('update-options', (event, args) => {
-    options = args;
-    fs.writeFileSync(optionsDir, JSON.stringify(options, null, 2));
+    settings = args;
+    WriteSettings(settings);
 });
 
 ipcMain.on('open-dir-dialog', (event, args) => {
@@ -300,7 +299,7 @@ ipcMain.on('upload-image', (event, arg) => {
 ipcMain.on('print-to-pdf', async event => {
     const pdf = BrowserWindow.fromWebContents(event.sender);
     
-    await PrintLoop(dirPath, pdf, printWindow);
+    await PrintLoop(dirPath, pdf, printWindow, win);
 });
 
 autoUpdater.on('update-available', () => win.loadFile('./html/main-window/update.html'));
