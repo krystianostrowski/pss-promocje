@@ -106,51 +106,54 @@ const GetSavePath = () => {
     return savePath;
 }
 
-const menuTemplate = [
-    {
-        label: "Dev-Options",
-        submenu: [
-            {
-                id: 1,
-                label: 'Enable experimental features',
-                type: 'checkbox',
-                checked: settings.experimental,
-                click: () => {
-                    settings.experimental = menu.getMenuItemById(1).checked;
-
-                    if(settings.experimental)
-                    {
-                        if(settings.saveLocation == null)
+if(!settings.experimental)
+{
+    const menuTemplate = [
+        {
+            label: "Dev-Options",
+            submenu: [
+                {
+                    id: 1,
+                    label: 'Enable experimental features',
+                    type: 'checkbox',
+                    checked: settings.experimental,
+                    click: () => {
+                        settings.experimental = menu.getMenuItemById(1).checked;
+    
+                        if(settings.experimental)
                         {
-                            dirPath = GetSavePath();
-                            settings.saveLocation = dirPath;
+                            if(settings.saveLocation == null)
+                            {
+                                dirPath = GetSavePath();
+                                settings.saveLocation = dirPath;
+                            }
+    
+                            AddToQueue('weekendA5');
+                            win.loadFile('./html/main-window/index-experimental.html');
                         }
-
-                        AddToQueue('weekendA5');
-                        win.loadFile('./html/main-window/index-experimental.html');
-                    }
-                    else if(!settings.experimental)
-                    {
-                        settings.saveLocation = null;
-
-                        RemoveFromQueue('weekendA5');
-                        win.loadFile('./html/main-window/index.html');
-                    }
-
-                    WriteSettings(settings);
-                    if(!isDev)
-                    {
-                        app.relaunch({args: process.argv.slice(1).concat(['--relaunch'])});
-                        app.exit(0);
+                        else if(!settings.experimental)
+                        {
+                            settings.saveLocation = null;
+    
+                            RemoveFromQueue('weekendA5');
+                            win.loadFile('./html/main-window/index.html');
+                        }
+    
+                        WriteSettings(settings);
+                        if(!isDev)
+                        {
+                            app.relaunch({args: process.argv.slice(1).concat(['--relaunch'])});
+                            app.exit(0);
+                        }
                     }
                 }
-            }
-        ]
-    }
-];
-
-const menu = Menu.buildFromTemplate(menuTemplate);
-Menu.setApplicationMenu(menu);
+            ]
+        }
+    ];
+    
+    const menu = Menu.buildFromTemplate(menuTemplate);
+    Menu.setApplicationMenu(menu);
+}
 
 const RegisterShortcuts = () => {
     if(isDev)
@@ -180,7 +183,7 @@ const CreateWindow = () => {
         resizable: true,
         darkTheme: true,
         title: `Promocja weekendowa v${version}`,
-        autoHideMenuBar: false,
+        autoHideMenuBar: settings.experimental,
         webPreferences: {
             devTools: true,
             nodeIntegration: true,
