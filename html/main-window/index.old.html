@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title></title>
+    <script src="../../js/renderers/renderer.js"></script>
+    <link rel="stylesheet" href="../../css/main-window/index.css">
+</head>
+<body>
+    <div class="container">
+        <form>
+            <label>
+                Od:
+                <input type="date" id="from">
+            </label>
+            <label>
+                Do:
+                <input type="date" id="to">
+            </label>
+            <table border="1" style="border-collapse: collapse;">
+                <thead>
+                    <th>Nazwa</th>
+                    <th>Kod</th>
+                    <th>Cena normalna</th>
+                    <th>Cena promocyjna</th>
+                    <th>Typ</th>
+                </thead>
+                <tbody>
+                    <tr id="item1">
+                        <td><input type="text"></td>
+                        <td><input type="text"></td>
+                        <td><input type="text"></td>
+                        <td><input type="text"></td>
+                        <td>
+                            <select>
+                            <option value="inne">inne</option>
+                            <option value="miesny">miesny</option>
+                            <option value="piekarnia">piekarnia</option>
+                            <option value="warzywo">warzywo/owoc</option>
+                            </select>
+                        </td>
+                    </tr>
+                    <tr id="item2">
+                        <td><input type="text"></td>
+                        <td><input type="text"></td>
+                        <td><input type="text"></td>
+                        <td><input type="text"></td>
+                        <td><select>
+                            <option value="inne">inne</option>
+                            <option value="miesny">miesny</option>
+                            <option value="piekarnia">piekarnia</option>
+                            <option value="warzywo">warzywo/owoc</option>
+                        </select></td>
+                    </tr>
+                    <tr id="item3">
+                        <td><input type="text"></td>
+                        <td><input type="text"></td>
+                        <td><input type="text"></td>
+                        <td><input type="text"></td>
+                        <td><select>
+                            <option value="inne">inne</option>
+                            <option value="miesny">miesny</option>
+                            <option value="piekarnia">piekarnia</option>
+                            <option value="warzywo">warzywo/owoc</option>
+                        </select></td>
+                    </tr>
+                    <tr id="item4">
+                        <td><input type="text"></td>
+                        <td><input type="text"></td>
+                        <td><input type="text"></td>
+                        <td><input type="text"></td>
+                        <td><select>
+                            <option value="inne">inne</option>
+                            <option value="miesny">miesny</option>
+                            <option value="piekarnia">piekarnia</option>
+                            <option value="warzywo">warzywo/owoc</option>
+                        </select></td>
+                    </tr>
+                    <tr id="item5">
+                        <td><input type="text"></td>
+                        <td><input type="text"></td>
+                        <td><input type="text"></td>
+                        <td><input type="text"></td>
+                        <td><select>
+                            <option value="inne">inne</option>
+                            <option value="miesny">miesny</option>
+                            <option value="piekarnia">piekarnia</option>
+                            <option value="warzywo">warzywo/owoc</option>
+                        </select></td>
+                    </tr>
+                    <tr id="item6">
+                        <td><input type="text"></td>
+                        <td><input type="text"></td>
+                        <td><input type="text"></td>
+                        <td><input type="text"></td>
+                        <td><select>
+                            <option value="inne">inne</option>
+                            <option value="miesny">miesny</option>
+                            <option value="piekarnia">piekarnia</option>
+                            <option value="warzywo">warzywo/owoc</option>
+                        </select></td>
+                    </tr>
+                    <tr id="item7">
+                        <td><input type="text"></td>
+                        <td><input type="text"></td>
+                        <td><input type="text"></td>
+                        <td><input type="text"></td>
+                        <td><select>
+                            <option value="inne">inne</option>
+                            <option value="miesny">miesny</option>
+                            <option value="piekarnia">piekarnia</option>
+                            <option value="warzywo">warzywo/owoc</option>
+                        </select></td>
+                    </tr>
+                    <tr id="item8">
+                        <td><input type="text"></td>
+                        <td><input type="text"></td>
+                        <td><input type="text"></td>
+                        <td><input type="text"></td>
+                        <td><select>
+                            <option value="inne">inne</option>
+                            <option value="miesny">miesny</option>
+                            <option value="piekarnia">piekarnia</option>
+                            <option value="warzywo">warzywo/owoc</option>
+                        </select></td>
+                    </tr>
+                    <tr id="item9">
+                        <td><input type="text"></td>
+                        <td><input type="text"></td>
+                        <td><input type="text"></td>
+                        <td><input type="text"></td>
+                        <td><select>
+                            <option value="inne">inne</option>
+                            <option value="miesny">miesny</option>
+                            <option value="piekarnia">piekarnia</option>
+                            <option value="warzywo">warzywo/owoc</option>
+                        </select></td>
+                    </tr>
+                    <tr id="item10">
+                        <td><input type="text"></td>
+                        <td><input type="text"></td>
+                        <td><input type="text"></td>
+                        <td><input type="text"></td>
+                        <td><select>
+                            <option value="inne">inne</option>
+                            <option value="miesny">miesny</option>
+                            <option value="piekarnia">piekarnia</option>
+                            <option value="warzywo">warzywo/owoc</option>
+                        </select></td>
+                    </tr>
+                </tbody>
+            </table>
+            <div class="buttons">
+                <button type="button" id="saveBtn">Zapisz</button>
+                <button type="reset">Wyczyść</button>
+            </div>
+        </form>
+    </div>
+    <div class="overlay">
+        <h1>Przygotowywanie plików.</h1>
+    </div>
+</body>
+</html>

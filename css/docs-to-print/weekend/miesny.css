@@ -26,6 +26,14 @@ body {
     font-size: 72pt;
 }
 
+.product-font-md {
+    font-size: 50pt;
+}
+
+.product-font-sm {
+    font-size: 40pt;
+}
+
 .price {
     font-size: 320pt;
 }

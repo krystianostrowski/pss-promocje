@@ -31,8 +31,11 @@ window.onload = () => {
                 const product = document.createElement('span');
                 product.innerText = d.name;
 
-                if(d.name.length > 13)
-                    product.classList.add('product-font-smaller');
+                if(d.name.length > 13 && d.name.length < 25)
+                    product.classList.add('product-font-md');
+                
+                if(d.name.length >= 25)
+                    product.classList.add('product-font-sm');
 
                 product.classList.add('product');
                 page.appendChild(product);

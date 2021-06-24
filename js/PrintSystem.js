@@ -21,6 +21,7 @@ const RemoveFromQueue = el => {
     }
 };
 
+//BUG: There are some issues with print system. Sometimes it won't print for the first time
 const PrintLoop = async (dirPath, pdf, printWindow) => {
     await Print(printQueue[queueIndex], pdf, dirPath).then(async saved => {
         if(saved && queueIndex == printQueue.length - 1)
@@ -31,7 +32,7 @@ const PrintLoop = async (dirPath, pdf, printWindow) => {
         else
         {
             queueIndex++;
-            await printWindow.loadFile(`./html/docs-to-print/${printQueue[queueIndex]}.html`, { hash: 'print' });
+            await printWindow.loadFile(`./html/docs-to-print/weekend/${printQueue[queueIndex]}.html`, { hash: 'print' });
         }
     }).catch(() => {
         queueIndex = 0;
@@ -39,7 +40,7 @@ const PrintLoop = async (dirPath, pdf, printWindow) => {
     });
 };
 
-const Print = async (fileName, data, dirPath, win) => {
+const Print = async (fileName, data, dirPath) => {
     let options = {};
 
     switch(fileName)

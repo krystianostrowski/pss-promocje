@@ -1,4 +1,5 @@
 window.onload = () => {
+    require('../../js/Titlebar')();
     const { ipcRenderer } = require('electron');
     const $ = require('jquery');
     const bootstrap = require('bootstrap');

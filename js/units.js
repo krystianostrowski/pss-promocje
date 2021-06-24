@@ -16,9 +16,10 @@ String.prototype.getMeasure = function() {
 };
 
 String.prototype.getUnits = function() {
+    let str = this.toLowerCase();
     const regexp = new RegExp(/(ml|l|g|dag|kg)/, 'g');
     
-    return this.match(regexp);
+    return str.match(regexp);
 };
 
 String.prototype.getValue = function() {
@@ -37,6 +38,8 @@ String.prototype.getValue = function() {
 };
 
 const ToSIUnits = (value, unit) => {
+    unit = unit.toLowerCase();
+
     if(unit == 'g')
     {
         value = value / 1000;

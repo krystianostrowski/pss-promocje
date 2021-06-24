@@ -10,7 +10,7 @@
     <link rel="stylesheet" href="../../css/main-window/settings.css">
 </head>
 <body>
-    <div class="container-fluid text-white" style="height: 100vh;">
+    <div class="container-fluid text-white pt-5" style="height: 100vh;">
         <div class="navbar navbar-dark">
             <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#menuOffcanvas">
                 <span class="navbar-toggler-icon"></span>
@@ -18,16 +18,22 @@
         </div>
         <div class="d-flex flex-column justify-content-evenly align-items-center m-auto" style="height: calc(100% - 56px);">
             <div>
-                <input type="text" disabled id="path">
-                <button id="dirDialog" class="btn btn-primary">Wybierz</button>
+                <label>
+                    Ścieżka zapisu plików: <br>
+                    <input type="text" disabled id="path">
+                    <button id="dirDialog" class="btn btn-primary">Wybierz</button>
+                </label>
             </div>
             <div>
-                <input type="text" disabled id="bg-path">
-                <button disabled id="bgDialog" class="btn btn-primary">Wybierz</button>
+                <label>
+                    Ścieżka do tła: <br>
+                    <input type="text" disabled id="bg-path">
+                    <button disabled id="bgDialog" class="btn btn-primary">Wybierz</button>
+                </label>
             </div>
             <label>
                 <input disabled type="checkbox" id="bg-checkbox">
-                <span class="text-muted">Zapisz wersje z tłem i bez tła</span>
+                <span class="text-muted">Dodaj tło</span>
             </label>
             <label>
                 <input type="checkbox" id="experimentalCheckbox">
@@ -38,7 +44,7 @@
 
         <!--OFFCANVAS MENU-->
         <div class="offcanvas offcanvas-start text-dark" tabindex="-1" id="menuOffcanvas">
-            <div class="offcanvas-header">
+            <div class="offcanvas-header pt-5">
                 <h5 id="offcanvasTopLabel">Menu</h5>
                 <button type="button" class="btn-close btn-reset" data-bs-dismiss="offcanvas"></button>
             </div>
@@ -65,7 +71,7 @@
                         <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
                     </div>
                     <div class="toast-body">
-                        Zmiany będą zastosowane po ponownym uruchomieniu aplikacji.<br>
+                        Zmiany zostaną zastosowane po ponownym uruchomieniu aplikacji.<br>
                         <button class="btn btn-primary" id="restartBtn">Uruchom ponownie</button>
                     </div>
                 </div>

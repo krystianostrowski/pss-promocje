@@ -1,9 +1,19 @@
-const { BrowserWindow, ipcMain, app, autoUpdater, shell, Menu, globalShortcut, dialog } = require('electron');
+/**
+ * TODO: Fonts should be more responsive (should be done when it comes to names but prices needs updates (targeting v1.2))
+ * TODO: Display errors (future. maybe 1.2?)
+ * TODO: More settings and dev tools 
+ * TODO: Better print system (done but needs improvements in the future to support more posters)
+ * TODO: Some issues with calcltaing price per kg or l (probably fixed)
+ * TODO: Adding images (on experimental)
+ */
+const { BrowserWindow, ipcMain, app, autoUpdater, shell, dialog } = require('electron');
 const { version } = require('./package.json');
 const path = require('path');
 const os = require('os');
-const { PrintLoop, AddToQueue, RemoveFromQueue, printQueue } = require('./js/PrintSystem');
-const { ReadSettings, WriteSettings } = require('./js/Settings');
+const { PrintLoop, AddToQueue, printQueue } = require('./js/PrintSystem');
+const { ReadSettings, WriteSettings, UpdateSettings } = require('./js/Settings');
+
+const fs = require('fs');
 
 let settings = ReadSettings();
 let win;
@@ -24,6 +34,10 @@ if(settings.firstRun)
     settings.firstRun = false;
     WriteSettings(settings);
 }
+
+const file = path.join(os.homedir(), 'Desktop', 'promocja_weekendowa.lnk');
+if(fs.existsSync(file))
+    fs.rmSync(file);
 
 //#region squirrel/updater
 const handleSquirrelEvent = () => {
@@ -62,6 +76,8 @@ const handleSquirrelEvent = () => {
         case '--squirrel-install':
         case '--squirrel-updated':
             spawnUpdate(['--createShortcut', exeName]);
+
+            UpdateSettings();
 
             setTimeout(app.quit, 1000);
             return true;
@@ -106,75 +122,18 @@ const GetSavePath = () => {
     return savePath;
 }
 
-if(!settings.experimental)
-{
-    const menuTemplate = [
-        {
-            label: "Dev-Options",
-            submenu: [
-                {
-                    id: 1,
-                    label: 'Enable experimental features',
-                    type: 'checkbox',
-                    checked: settings.experimental,
-                    click: () => {
-                        settings.experimental = menu.getMenuItemById(1).checked;
-    
-                        if(settings.experimental)
-                        {
-                            if(settings.saveLocation == null)
-                            {
-                                dirPath = GetSavePath();
-                                settings.saveLocation = dirPath;
-                            }
-    
-                            AddToQueue('weekendA5');
-                            win.loadFile('./html/main-window/index-experimental.html');
-                        }
-                        else if(!settings.experimental)
-                        {
-                            settings.saveLocation = null;
-    
-                            RemoveFromQueue('weekendA5');
-                            win.loadFile('./html/main-window/index.html');
-                        }
-    
-                        WriteSettings(settings);
-                        if(!isDev)
-                        {
-                            app.relaunch({args: process.argv.slice(1).concat(['--relaunch'])});
-                            app.exit(0);
-                        }
-                    }
-                }
-            ]
-        }
-    ];
-    
-    const menu = Menu.buildFromTemplate(menuTemplate);
-    Menu.setApplicationMenu(menu);
-}
-
-const RegisterShortcuts = () => {
-    if(isDev)
+const LoadMainPage = () => {
+    if(!settings.licenseAccepted)
     {
-        globalShortcut.register('F5', () => {
-            win.reload();
-        });
-    
-        globalShortcut.register('F6', () => {
-            win.openDevTools();
-        });
-
-        globalShortcut.register('F7', () => {
-            bShowWindows = !bShowWindows;
-        });
+        win.loadFile('./html/main-window/license.html');
+        return;
     }
-    
-    globalShortcut.register('CmdOrCtrl+P', () => {
-        win.webContents.send('print-shortcut');
-    });
-};
+
+    if(settings.experimental)
+        win.loadFile('./html/main-window/index-experimental.html');
+    else
+        win.loadFile('./html/main-window/index.html');
+}
 
 const CreateWindow = () => {
     win = new BrowserWindow({
@@ -183,7 +142,8 @@ const CreateWindow = () => {
         resizable: true,
         darkTheme: true,
         title: `Promocja weekendowa v${version}`,
-        autoHideMenuBar: settings.experimental,
+        autoHideMenuBar: true,
+        frame: false,
         webPreferences: {
             devTools: true,
             nodeIntegration: true,
@@ -191,10 +151,7 @@ const CreateWindow = () => {
         }
     });
 
-    if(settings.experimental)
-        win.loadFile('./html/main-window/index-experimental.html');
-    else
-        win.loadFile('./html/main-window/index.html');
+    LoadMainPage();
 
     if(isDev)
         win.webContents.openDevTools({mode: 'undocked'});
@@ -203,11 +160,42 @@ const CreateWindow = () => {
         if(bIsPrintWindowOpen)
             printWindow.close();
     });
+
+    win.webContents.on('before-input-event', (event, input) => {
+        const key = input.key.toLowerCase();
+
+        if(isDev)
+        {
+            if(key === 'f5')
+            {
+                win.reload();
+                event.preventDefault();
+            }
+
+            if(key === 'f6')
+            {
+                win.openDevTools();
+                event.preventDefault();
+            }
+
+            if(key === 'f7')
+            {
+                bShowWindows = !bShowWindows;
+                event.preventDefault();
+            }
+        }
+
+        if(input.control && key === 'p')
+        {
+            win.webContents.send('print-shortcut');
+            event.preventDefault();
+        }
+
+    })
 };
 
 app.whenReady().then(() => {
     CreateWindow();
-    RegisterShortcuts();
 
     if(settings.saveLocation == null && settings.experimental)
         dirPath = GetSavePath();
@@ -216,8 +204,6 @@ app.whenReady().then(() => {
         if(BrowserWindow.getAllWindows().length == 0)
             CreateWindow();
     });
-
-    app.on('will-quit', () => globalShortcut.unregisterAll());
 
     app.on('window-all-closed', () => {
         if(process.platform !== 'darwin')
@@ -242,7 +228,7 @@ ipcMain.on('open-print-window', (event, args) => {
                 }
             });
 
-            window.loadFile('./html/docs-to-print/' + printQueue[i] + '.html');
+            window.loadFile('./html/docs-to-print/weekend/' + printQueue[i] + '.html');
             window.openDevTools();
         }
 
@@ -260,7 +246,7 @@ ipcMain.on('open-print-window', (event, args) => {
         });
     
         printWindow.hide();
-        printWindow.loadFile('./html/docs-to-print/zawiadomienie.html', { hash: 'print' });
+        printWindow.loadFile('./html/docs-to-print/weekend/zawiadomienie.html', { hash: 'print' });
 
         if(isDev)
             printWindow.webContents.openDevTools({mode: 'undocked'});
@@ -316,6 +302,21 @@ ipcMain.on('install-update', () => {
 });
 
 ipcMain.on('restart-app', () => {
-    app.relaunch({args: process.argv.slice(1).concat(['--relaunch'])});
+    app.relaunch({ args: process.argv.slice(1).concat(['--relaunch']) });
     app.exit(0);
 });
+
+ipcMain.on('license-rejected', () => {
+    app.exit(0);
+});
+
+ipcMain.on('license-accepted', () => {
+    settings.licenseAccepted = true;
+    WriteSettings(settings);
+
+    LoadMainPage();
+});
+
+ipcMain.on('titlebar-close', () => app.exit(0));
+ipcMain.on('titlebar-maximize', () => win.isMaximized() ? win.unmaximize() : win.maximize());
+ipcMain.on('titlebar-minimize', () => win.minimize());

@@ -1,7 +1,7 @@
 [
     {
         "name": "Weekend",
-        "link": "./index-experimental.html",
+        "link": "./index.html",
         "enabled": true,
         "badge": ""
     },

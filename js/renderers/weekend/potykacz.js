@@ -1,6 +1,6 @@
 window.addEventListener('DOMContentLoaded', () => {
     const { ipcRenderer } = require('electron');
-    const units = require('../../js/units');
+    const units = require('../../../js/units');
     const tbody = document.querySelector('tbody');
     let data;
     let date;

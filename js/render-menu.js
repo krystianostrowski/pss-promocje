@@ -1,4 +1,3 @@
-
 const menu = require('../../assets/menu.json');
 
 const menuContainer = document.querySelector('ul.navbar-nav');

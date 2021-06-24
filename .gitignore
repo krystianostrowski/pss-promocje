@@ -3,3 +3,4 @@ build
 installer.js
 .VSCodeCounter
 assets/custom-templates.json
+package.js

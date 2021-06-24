@@ -1,4 +1,5 @@
 window.onload = () => {
+    require('../../js/Titlebar')();
     const { ipcRenderer } = require('electron');
 
     ipcRenderer.on('downloaded-update', () => {

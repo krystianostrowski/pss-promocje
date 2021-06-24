@@ -31,6 +31,13 @@ window.onload = () => {
                 const product = document.createElement('span');
                 product.innerText = d.name;
                 product.classList.add('product');
+
+                if(d.name.length > 13 && d.name.length < 25)
+                    product.classList.add('product-font-md');
+                
+                if(d.name.length >= 25)
+                    product.classList.add('product-font-sm');
+
                 page.appendChild(product);
 
                 const price = document.createElement('span');

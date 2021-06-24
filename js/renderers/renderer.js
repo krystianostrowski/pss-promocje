@@ -1,12 +1,24 @@
+const notifier = require('../../js/EventSystem');
+
 window.onload = () => {
+    require('../../js/Titlebar')();
     const { ipcRenderer } = require('electron');
+    const $ = require('jquery');
+    require('bootstrap');
+    const { ErrorHandler } = require('../../js/errors');
+
+    ErrorHandler();
 
     const saveBtn = document.querySelector('#saveBtn');
     const table = document.querySelector('tbody');
     const overlay = document.querySelector('.overlay');
+    const body = document.querySelector('body');
 
     const SaveData = () => {
         overlay.classList.add('overlay--visible');
+
+        window.scrollTo(0, 0);
+        body.style.overflowY = 'hidden';
 
         const data = [];
 
@@ -21,25 +33,21 @@ window.onload = () => {
                 code: cells[1].value,
                 price: cells[2].value,
                 prom_price: cells[3].value,
-                type: select.value
+                type: select.value,
             }
 
             data.push(obj);
         });
         
+        //FIXME: There are some issues with date
         let dateTime = new Date(document.querySelector('#from').value)
-        let day = dateTime.getDate() + 1;
-        let month = dateTime.getMonth() + 1;
-
-        day = day < 10 ? "0" + day : day;
-        month = month < 10 ? "0" + month : month;
+        let day = `0${dateTime.getDate()}`.slice(-2);
+        let month = `0${dateTime.getMonth() + 1}`.slice(-2);
         const from = `${day}.${month}.${dateTime.getFullYear()}`;
 
         dateTime = new Date(document.querySelector('#to').value);
-        day = dateTime.getDate() + 1;
-        day = day < 10 ? "0" + day : day;
-        month = dateTime.getMonth() + 1;
-        month = month < 10 ? "0" + month : month;
+        day = `0${dateTime.getDate()}`.slice(-2);
+        month = `0${dateTime.getMonth() + 1}`.slice(-2);
         const to = `${day}.${month}.${dateTime.getFullYear()}`;
 
         const date = {
@@ -50,9 +58,52 @@ window.onload = () => {
         ipcRenderer.send('open-print-window', {data: data, date: date});
     };
 
+    /*table.addEventListener('click', e => {
+        if(e.target.classList.contains('fileUpload'))
+        {
+            const node = e.target;
+            const fileId = node.id;
+
+            ipcRenderer.send('upload-image', fileId);
+        }
+    });
+
+    ipcRenderer.on('image-uploaded', (event, args) => {
+        const id = args.id;
+        const path = args.path;
+        
+        if(path == undefined)
+            return;
+
+        const btn = document.querySelector(`#${id}`);
+        btn.setAttribute('path', path);
+        const parent = document.querySelector(`#${id}-parent`);
+        let img = parent.querySelector('img');
+
+        if(img && path != undefined)
+        {
+            img.src = path;
+        }
+        else
+        {
+            img = document.createElement('img');
+            img.src = path;
+            img.classList.add('td-img');
+            parent.appendChild(img);
+        }
+
+        img.addEventListener('click', e => {
+            e.target.remove();
+            btn.removeAttribute('path');
+        });
+    });*/
+
     saveBtn.addEventListener('click', () => SaveData());
 
     ipcRenderer.on('print-shortcut', () => SaveData());
 
-    ipcRenderer.on('saved-pdfs', () => overlay.classList.remove('overlay--visible'));
+    ipcRenderer.on('saved-pdfs', () => {
+        overlay.classList.remove('overlay--visible');
+        body.style.overflowY = 'auto';
+    });
 }

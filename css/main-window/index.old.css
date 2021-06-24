@@ -4,19 +4,6 @@
     box-sizing: border-box;
 }
 
-::-webkit-scrollbar {
-    width: 10px;
-}
-
-::-webkit-scrollbar-track {
-    background: #2c2f33;
-}
-
-::-webkit-scrollbar-thumb {
-    background: #000;
-    border-radius: 10px;
-}
-
 .overlay {
     position: absolute;
     top: 0;
@@ -93,20 +80,6 @@ button {
     justify-content: center;
     align-items: center;
     height: 20%;
-}
-
-.td-img {
-    height: 36px;
-}
-
-td {
-    padding: 0 !important;
-    height: 50px;
-}
-
-tr > td:last-of-type {
-    display: flex;
-    padding: 8px !important; 
 }
 
 @font-face {
